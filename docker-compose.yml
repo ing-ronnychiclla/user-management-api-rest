@@ -1,0 +1,32 @@
+version: "3.8"   # Versión del formato de docker-compose (no es la versión de Docker)
+
+services:
+  postgres-db:   # Nombre del servicio (así lo verán otros contenedores)
+    image: postgres:15-alpine   # Imagen oficial de PostgreSQL (ligera)
+    container_name: postgres_usuarios_container   # Nombre del contenedor en Docker
+
+    ports:
+      - "5433:5432"   # Puerto PC : Puerto contenedor (permite conexión desde fuera)
+
+    environment:
+      # Variables de entorno tomadas del archivo .env
+      # Aquí se inicializa la BD, el usuario y la contraseña
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      # Volumen para que los datos de la BD NO se pierdan
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      # Red Docker para comunicación con otros servicios (Spring Boot, pgAdmin, etc.)
+      - usuarios-net
+
+volumes:
+  # Volumen Docker persistente (vive fuera del contenedor)
+  postgres_data:
+
+networks:
+  # Red Docker personalizada para el sistema
+  usuarios-net:
